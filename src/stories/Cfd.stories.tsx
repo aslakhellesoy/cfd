@@ -12,10 +12,10 @@ export default {
 
 export const Simple = () => {
   const data = [
-    { x: 0, y: 10 },
-    { x: 1, y: 15 },
-    { x: 2, y: 35 },
-    { x: 3, y: 20 },
+    { timestamp: 0, todo: 10 },
+    { timestamp: 1, todo: 15 },
+    { timestamp: 2, todo: 35 },
+    { timestamp: 3, todo: 20 },
   ]
   return <Cfd data={data} />
 }
