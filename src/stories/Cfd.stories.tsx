@@ -11,5 +11,11 @@ export default {
 } as Meta
 
 export const Simple = () => {
-  return <Cfd data={[10, 20, 40]} />
+  const data = [
+    { x: 0, y: 10 },
+    { x: 1, y: 15 },
+    { x: 2, y: 35 },
+    { x: 3, y: 20 },
+  ]
+  return <Cfd data={data} />
 }
