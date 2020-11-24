@@ -2,17 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-svg {
-  border: 1px solid #dedede;
-}
+/*svg {*/
+/*  border: 1px solid #dedede;*/
+/*}*/
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
+/*.axis path,*/
+/*.axis line {*/
+/*  fill: none;*/
+/*  stroke: #000;*/
+/*  shape-rendering: crispEdges;*/
+/*}*/
 
-.area {
-  fill: #4ca3bd;
-}
+/*.area {*/
+/*  fill: #4ca3bd;*/
+/*}*/
