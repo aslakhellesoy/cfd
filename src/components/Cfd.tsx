@@ -60,7 +60,7 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
         stackedData.push(currentStack)
       })
 
-      const margin = { top: 20, right: 20, bottom: 30, left: 50 }
+      const margin = { top: 20, right: 50, bottom: 30, left: 50 }
       const svg = d3.select(d3Container.current)
       // .attr('width', width + margin.left + margin.right)
       // .attr('height', height + margin.top + margin.bottom)
@@ -118,16 +118,12 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
       // Add the Y Axis
       chart.append('g').attr('class', 'y axis').attr('transform', `translate(0, 0)`).call(yAxis)
 
-      // Focus lines
+      // Hover lines
       const focus = chart.append('g').attr('class', 'focus').style('display', 'none')
-
-      focus.append('line').attr('class', 'x-hover-line hover-line').attr('y1', 0).attr('y2', height)
-      focus.append('line').attr('class', 'y-hover-line hover-line').attr('x1', width).attr('x2', width)
-
+      focus.append('line').attr('class', 'hover-line').attr('y1', 0).attr('y2', height)
+      focus.append('line').attr('class', 'hover-line').attr('x1', width).attr('x2', width)
       focus.append('circle').attr('r', 7.5)
-
       focus.append('text').attr('x', 15).attr('dy', '.31em')
-
       svg
         .append('rect')
         .attr('transform', `translate(${margin.left},${margin.top})`)
@@ -137,41 +133,22 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
         .on('mouseover', () => focus.style('display', null))
         .on('mouseout', () => focus.style('display', 'none'))
         .on('mousemove', (evt) => {
-          const data = stackedData[stackedData.length - 1]
+          const data = stackedData[0]
           const pointer = d3.pointer(evt)
 
+          // Find the closest datum (along the x axis)
           const x0 = xScale.invert(pointer[0]),
             i = bisectDate(data, x0, 1),
             d0 = data[i - 1],
             d1 = data[i],
             d = x0 - d0.timestamp > d1.timestamp - x0 ? d1 : d0
           const translateX = xScale(d.timestamp)
-          const translateY = yScale(d.values[0])
+          const translateY = yScale(d.values[1])
           focus.attr('transform', `translate(${translateX},${translateY})`)
           focus.select('text').text(() => d.values[1])
           focus.select('.x-hover-line').attr('y2', height - translateY)
           focus.select('.y-hover-line').attr('x2', width + width)
         })
-      //
-      // focus.append('line').attr('class', 'y-hover-line hover-line').attr('x1', width).attr('x2', width)
-      //
-      // focus.append('circle').attr('r', 7.5)
-      //
-      // focus.append('text').attr('x', 15).attr('dy', '.31em')
-      //
-      // svg
-      //   .append('rect')
-      //   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-      //   .attr('class', 'overlay')
-      //   .attr('width', width)
-      //   .attr('height', height)
-      //   .on('mouseover', function () {
-      //     focus.style('display', null)
-      //   })
-      //   .on('mouseout', function () {
-      //     focus.style('display', 'none')
-      //   })
-      // .on('mousemove', mousemove)
     }
   }, [points])
 
