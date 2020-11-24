@@ -40,7 +40,7 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
   const d3Container = useRef(null)
 
   useEffect(() => {
-    if (points && d3Container.current) {
+    if (d3Container.current) {
       const keys = ['todo', 'doing', 'done']
       const stack = d3.stack<Point>().keys(keys)
       const stackedValues = stack(points)
@@ -61,14 +61,13 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
       const width = 575 - margin.left - margin.right
       const height = 350 - margin.top - margin.bottom
 
-      const yMax = d3.max(stackedValues[stackedValues.length - 1], (dp) => dp[1])!
-      console.log({ yMax })
-      const xScale = d3
-        .scaleLinear()
-        .domain(d3.extent(points, (point) => point.timestamp) as [number, number])
-        .range([0, width])
-      const yScale = d3.scaleLinear().domain([0, yMax]).range([height, 0])
+      const xDomain = d3.extent(stackedData[stackedData.length - 1].map((sd) => sd.timestamp)) as [number, number]
+      const xScale = d3.scaleLinear().domain(xDomain).range([0, width])
       const xAxis = d3.axisBottom(xScale)
+
+      const yMax = d3.max(stackedValues[stackedValues.length - 1], (dp) => dp[1])!
+      const yDomain = [0, yMax]
+      const yScale = d3.scaleLinear().domain(yDomain).range([height, 0])
       const yAxis = d3.axisLeft(yScale)
 
       const area = d3

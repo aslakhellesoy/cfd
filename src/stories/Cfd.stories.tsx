@@ -10,14 +10,7 @@ export default {
   component: Cfd,
 } as Meta
 
-export const Simple = () => {
-  // const data = [
-  //   { timestamp: 0, todo: 10 },
-  //   { timestamp: 1, todo: 15 },
-  //   { timestamp: 2, todo: 35 },
-  //   { timestamp: 3, todo: 20 },
-  // ]
-
+export const FromPoints = () => {
   const points = [
     {
       timestamp: 2000,
