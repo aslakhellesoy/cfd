@@ -2,7 +2,8 @@ import * as d3 from 'd3'
 import React, { useEffect, useRef } from 'react'
 
 /*
-D3 / React
+D3 Stacked Charts
+https://observablehq.com/@d3/stacked-area-chart-via-d3-group?collection=@d3/d3-shape
 https://www.mattlayman.com/blog/2015/d3js-area-chart/
 https://bl.ocks.org/d3noob/119a138ef9bd1d8f0a8d57ea72355252
 https://medium.com/@louisemoxy/how-to-create-a-stacked-area-chart-with-d3-28a2fee0b8ca
@@ -118,11 +119,18 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
       // Add the Y Axis
       chart.append('g').attr('class', 'y axis').attr('transform', `translate(0, 0)`).call(yAxis)
 
-      // Hover lines
-      const focus = chart.append('g').attr('class', 'focus').style('display', 'none')
+      /////// Hover lines
+      const hoverContainer = chart.append('g').style('display', 'none')
+
+      // Create a new element for the line - initially invisible
+      const focus = hoverContainer.append('g').attr('class', 'focus')
+
+      // The height of the line is the full chart. Defined with ({x1=0,y1}, {x2,y2})
       focus.append('line').attr('class', 'hover-line').attr('y1', 0).attr('y2', height)
       focus.append('line').attr('class', 'hover-line').attr('x1', width).attr('x2', width)
-      focus.append('circle').attr('r', 7.5)
+
+      const circles = stackedData.map(() => hoverContainer.append('circle').attr('r', 4))
+
       focus.append('text').attr('x', 15).attr('dy', '.31em')
       svg
         .append('rect')
@@ -130,24 +138,31 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
         .attr('class', 'overlay')
         .attr('width', width)
         .attr('height', height)
-        .on('mouseover', () => focus.style('display', null))
-        .on('mouseout', () => focus.style('display', 'none'))
+        .on('mouseover', () => hoverContainer.style('display', null))
+        .on('mouseout', () => hoverContainer.style('display', 'none'))
         .on('mousemove', (evt) => {
-          const data = stackedData[0]
           const pointer = d3.pointer(evt)
 
-          // Find the closest datum (along the x axis)
-          const x0 = xScale.invert(pointer[0]),
-            i = bisectDate(data, x0, 1),
-            d0 = data[i - 1],
-            d1 = data[i],
-            d = x0 - d0.timestamp > d1.timestamp - x0 ? d1 : d0
+          // Find the closest datum along the x axis and calculate the translate x value
+          const data0 = stackedData[0]
+          const x0 = xScale.invert(pointer[0])
+          const i = bisectDate(data0, x0, 1)
+          const n = x0 - data0[i - 1].timestamp > data0[i].timestamp - x0 ? i : i - 1
+          const d = data0[n]
           const translateX = xScale(d.timestamp)
-          const translateY = yScale(d.values[1])
-          focus.attr('transform', `translate(${translateX},${translateY})`)
-          focus.select('text').text(() => d.values[1])
-          focus.select('.x-hover-line').attr('y2', height - translateY)
-          focus.select('.y-hover-line').attr('x2', width + width)
+
+          for (let di = 0; di < stackedData.length; di++) {
+            const data = stackedData[di][n]
+            // Move the circle
+            const circleTranslateY = yScale(data.values[1])
+            const circle = circles[di]
+            circle.attr('transform', `translate(${translateX},${circleTranslateY})`)
+          }
+
+          focus.attr('transform', `translate(${translateX},0)`)
+
+          // Set the text
+          // focus.select('text').text(() => d.values[1])
         })
     }
   }, [points])
