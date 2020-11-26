@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import React, { useEffect, useRef } from 'react'
+import React, { PropsWithChildren, useEffect, useRef } from 'react'
 
 /*
 D3 Stacked Charts
@@ -17,44 +17,56 @@ https://medium.com/@louisemoxy/create-an-accurate-tooltip-for-a-d3-area-chart-bf
 
 CFD
 https://getnave.com/blog/how-to-read-the-cumulative-flow-diagram-infographic/
+
+TypeScript generic component
+https://wanago.io/2020/03/09/functional-react-components-with-generic-props-in-typescript/
 */
 
-interface Props {
-  points: readonly Point[]
+type TimeDatum = {
+  Date: string
 }
 
-interface Point {
-  timestamp: number
-  todo: number
-  doing: number
-  done: number
+interface Props<Datum extends TimeDatum> {
+  data: readonly Datum[]
+  properties: readonly {
+    key: keyof Datum
+    label: string
+  }[]
 }
+
+// interface Point {
+//   timestamp: number
+//   todo: number
+//   doing: number
+//   done: number
+// }
 
 interface StackDatum {
-  timestamp: number
+  timestamp: Date
   values: number[]
 }
 
-const color = ['lightgreen', 'lightblue', 'pink']
+const color = ['lightgreen', 'lightblue', 'pink', 'orange']
 const strokeWidth = 1.5
 
 const bisectDate = d3.bisector((d: StackDatum) => d.timestamp).left
 
-const Cfd: React.FunctionComponent<Props> = ({ points }) => {
+const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) => {
+  const { data, properties } = props
   const d3Container = useRef(null)
 
   useEffect(() => {
     if (d3Container.current) {
-      const keys = ['todo', 'doing', 'done']
-      const stack = d3.stack<Point>().keys(keys)
-      const stackedValues = stack(points)
+      const keys = properties.map((p) => p.key.toString())
+      const stack = d3.stack<Datum>().keys(keys)
+      const stackedValues = stack(data)
 
       const stackedData: StackDatum[][] = []
       stackedValues.forEach((layer) => {
         const currentStack: StackDatum[] = []
         layer.forEach((d, i) => {
           currentStack.push({
-            timestamp: points[i].timestamp,
+            timestamp: new Date(data[i].Date),
             values: d,
           })
         })
@@ -78,8 +90,8 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
         .attr('transform', `translate(-${margin.left - strokeWidth},0)`)
         .attr('class', 'grp')
 
-      const xDomain = d3.extent(stackedData[stackedData.length - 1].map((sd) => sd.timestamp)) as [number, number]
-      const xScale = d3.scaleLinear().domain(xDomain).range([0, width])
+      const xDomain = d3.extent(stackedData[stackedData.length - 1].map((sd) => sd.timestamp)) as [Date, Date]
+      const xScale = d3.scaleTime().domain(xDomain).range([0, width])
       const xAxis = d3.axisBottom(xScale)
 
       const yMax = d3.max(stackedValues[stackedValues.length - 1], (dp) => dp[1])!
@@ -105,16 +117,13 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
         .attr('stroke-linecap', 'round')
         .attr('stroke-width', strokeWidth)
         .attr('d', (d) => area(d))
-        .on('mousemove', (a, b) => {
-          // console.log('DATUM', b)
-        })
 
       // Add the X Axis
       chart
         .append('g')
         .attr('class', 'x axis')
         .attr('transform', `translate(0,${height})`)
-        .call(xAxis.ticks(points.length))
+        .call(xAxis.ticks(data.length))
 
       // Add the Y Axis
       chart.append('g').attr('class', 'y axis').attr('transform', `translate(0, 0)`).call(yAxis)
@@ -147,7 +156,8 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
           const data0 = stackedData[0]
           const x0 = xScale.invert(pointer[0])
           const i = bisectDate(data0, x0, 1)
-          const n = x0 - data0[i - 1].timestamp > data0[i].timestamp - x0 ? i : i - 1
+          const n =
+            x0.getTime() - data0[i - 1].timestamp.getTime() > data0[i].timestamp.getTime() - x0.getTime() ? i : i - 1
           const d = data0[n]
           const translateX = xScale(d.timestamp)
 
@@ -165,7 +175,7 @@ const Cfd: React.FunctionComponent<Props> = ({ points }) => {
           // focus.select('text').text(() => d.values[1])
         })
     }
-  }, [points])
+  }, [data])
 
   return <svg width={800} height={400} ref={d3Container} />
 }
