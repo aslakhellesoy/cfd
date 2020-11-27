@@ -1,14 +1,9 @@
-# React-TypeScript-Storybook
+# Cfd
 
-Starter-project for React components/apps using TypeScript and Storybook.
+This is an interactive React component for [Cumulative Flow Diagrams](https://en.wikipedia.org/wiki/Cumulative_flow_diagram)
+built with [d3](https://d3js.org/).
 
 ## Try it out
 
-    # Run tests
-    yarn test
-
-    # Run tests with code coverage
-    yarn nyc
-
-    # Bring up Storybook
-    yarn storybook
+    npm install
+    npm run storybook

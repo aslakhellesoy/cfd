@@ -24,14 +24,14 @@ body {
 .axis path,
 .axis line {
   fill: none;
-  stroke: #d4d8da;
+  stroke: #111401;
   stroke-width: 2px;
   shape-rendering: crispEdges;
 }
 
 .line {
   fill: none;
-  stroke: #6f257f;
+  stroke: #111401;
   stroke-width: 5px;
 }
 
@@ -42,7 +42,7 @@ body {
 
 .focus circle {
   fill: #f1f3f3;
-  stroke: #6f257f;
+  stroke: #111401;
   stroke-width: 5px;
 }
 
@@ -52,7 +52,7 @@ https://www.w3schools.com/howto/howto_css_transition_hover.asp
 */
 
 .hover-line {
-  stroke: #6f257f;
+  stroke: #111401;
   stroke-width: 2px;
   stroke-dasharray: 3, 3;
 }

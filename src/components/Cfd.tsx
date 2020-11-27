@@ -22,8 +22,8 @@ TypeScript generic component
 https://wanago.io/2020/03/09/functional-react-components-with-generic-props-in-typescript/
 */
 
-type TimeDatum = {
-  Date: string
+export type TimeDatum = {
+  Time: string
 }
 
 interface Props<Datum extends TimeDatum> {
@@ -34,19 +34,12 @@ interface Props<Datum extends TimeDatum> {
   }[]
 }
 
-// interface Point {
-//   timestamp: number
-//   todo: number
-//   doing: number
-//   done: number
-// }
-
 interface StackDatum {
   timestamp: Date
   values: number[]
 }
 
-const color = ['lightgreen', 'lightblue', 'pink', 'orange']
+const color = ['#585a4d', '#707266', '#888980', '#9fa199', '#b7b8b2', '#cfd0cc']
 const strokeWidth = 1.5
 
 const bisectDate = d3.bisector((d: StackDatum) => d.timestamp).left
@@ -66,7 +59,7 @@ const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) =>
         const currentStack: StackDatum[] = []
         layer.forEach((d, i) => {
           currentStack.push({
-            timestamp: new Date(data[i].Date),
+            timestamp: new Date(data[i].Time),
             values: d,
           })
         })
@@ -112,7 +105,7 @@ const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) =>
         .append('path')
         .attr('transform', `translate(${margin.left},0)`)
         .style('fill', (d, i) => color[i])
-        .attr('stroke', 'steelblue')
+        .attr('stroke', '#111401')
         .attr('stroke-linejoin', 'round')
         .attr('stroke-linecap', 'round')
         .attr('stroke-width', strokeWidth)
@@ -175,7 +168,7 @@ const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) =>
           // focus.select('text').text(() => d.values[1])
         })
     }
-  }, [data])
+  }, [data, properties])
 
   return <svg width={800} height={400} ref={d3Container} />
 }
