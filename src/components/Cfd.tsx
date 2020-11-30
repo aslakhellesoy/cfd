@@ -1,29 +1,8 @@
 import * as d3 from 'd3'
 import React, { PropsWithChildren, useEffect, useRef } from 'react'
 
-/*
-D3 Stacked Charts
-https://observablehq.com/@d3/stacked-area-chart-via-d3-group?collection=@d3/d3-shape
-https://www.mattlayman.com/blog/2015/d3js-area-chart/
-https://bl.ocks.org/d3noob/119a138ef9bd1d8f0a8d57ea72355252
-https://medium.com/@louisemoxy/how-to-create-a-stacked-area-chart-with-d3-28a2fee0b8ca
-
-Hover lines / tooltip
-https://bl.ocks.org/alandunning/cfb7dcd7951826b9eacd54f0647f48d3
-https://medium.com/@louisemoxy/create-an-accurate-tooltip-for-a-d3-area-chart-bf59783f8a2d
-
-Responsiveness
-https://medium.com/@louisemoxy/create-an-accurate-tooltip-for-a-d3-area-chart-bf59783f8a2d
-
-CFD
-https://getnave.com/blog/how-to-read-the-cumulative-flow-diagram-infographic/
-
-TypeScript generic component
-https://wanago.io/2020/03/09/functional-react-components-with-generic-props-in-typescript/
-*/
-
 export type TimeDatum = {
-  Time: string
+  timestamp: Date
 }
 
 interface Props<Datum extends TimeDatum> {
@@ -46,20 +25,27 @@ const bisectDate = d3.bisector((d: StackDatum) => d.timestamp).left
 
 const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) => {
   const { data, properties } = props
+
   const d3Container = useRef(null)
 
   useEffect(() => {
     if (d3Container.current) {
-      const keys = properties.map((p) => p.key.toString())
+      const keys = properties.map((p) => p.key.toString()).reverse()
       const stack = d3.stack<Datum>().keys(keys)
       const stackedValues = stack(data)
+
+      // Can we do without stackedData? These examples seem to be using stackedValues directly:
+      // https://observablehq.com/@d3/stacked-area-chart?collection=@d3/d3-shape
+      // We should make a new implementation that uses that.
+      // And absolutely read this! https://github.com/d3/d3-shape/blob/master/README.md#stacks
+      // Also simple: https://stackoverflow.com/questions/54426531/d3-stack-area-problem-using-typescript-in-angular
 
       const stackedData: StackDatum[][] = []
       stackedValues.forEach((layer) => {
         const currentStack: StackDatum[] = []
         layer.forEach((d, i) => {
           currentStack.push({
-            timestamp: new Date(data[i].Time),
+            timestamp: new Date(data[i].timestamp),
             values: d,
           })
         })
@@ -73,9 +59,6 @@ const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) =>
 
       const width = +svg.attr('width') - margin.left - margin.right
       const height = +svg.attr('height') - margin.top - margin.bottom
-      // const width = 575 - margin.left - margin.right
-      // const height = 350 - margin.top - margin.bottom
-
       // Sometimes called g in bl.ocks.org examples
       const chart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`).attr('class', 'chart')
       const grp = chart
@@ -109,7 +92,7 @@ const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) =>
         .attr('stroke-linejoin', 'round')
         .attr('stroke-linecap', 'round')
         .attr('stroke-width', strokeWidth)
-        .attr('d', (d) => area(d))
+        .attr('d', area)
 
       // Add the X Axis
       chart

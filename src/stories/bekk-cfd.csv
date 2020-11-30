@@ -1,4 +1,4 @@
-Time,Deployed,Approved,QA,Develop,Specify,Backlog
+timestamp,Deployed,Approved,QA,Develop,Specify,Backlog
 2020-12-01,0,0,0,0,0,100
 2020-12-02,0,0,0,0,16,84
 2020-12-03,0,0,0,8,14,78

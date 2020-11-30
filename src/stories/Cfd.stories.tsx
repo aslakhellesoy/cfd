@@ -3,7 +3,11 @@ import '../css/styles.css'
 import { Meta } from '@storybook/react/types-6-0'
 import React from 'react'
 
+// @ts-ignore
+import test from '../../test/test-cfd.csv'
+import TestDatum from '../../test/TestDatum'
 import Cfd, { TimeDatum } from '../components/Cfd'
+import Cfd2 from '../components/Cfd2'
 // @ts-ignore
 import ardalis from './ardalis-cfd.csv'
 // @ts-ignore
@@ -14,44 +18,50 @@ export default {
   component: Cfd,
 } as Meta
 
+function convert<T extends TimeDatum>(data: Record<string, string | number>[]): ReadonlyArray<T> {
+  return data.map((datum) => {
+    return { ...datum, ...{ timestamp: new Date(datum.timestamp) } } as T
+  })
+}
+
 // https://blogg.bekk.no/cumulative-flow-diagrams-with-google-spreadsheets-f3c001a431b0
 type BekkDatum = TimeDatum & {
   Deployed: string
-  Approved: string
-  QA: string
-  Develop: string
-  Specify: string
-  Backlog: string
+  Approved: number
+  QA: number
+  Develop: number
+  Specify: number
+  Backlog: number
 }
 
 export const Bekk = () => {
   return (
-    <Cfd
-      data={bekk as readonly BekkDatum[]}
+    <Cfd2
+      data={convert<BekkDatum>(bekk)}
       properties={[
         {
-          key: 'Deployed',
-          label: 'Deployed',
-        },
-        {
-          key: 'Approved',
-          label: 'Approved',
-        },
-        {
-          key: 'QA',
-          label: 'QA',
-        },
-        {
-          key: 'Develop',
-          label: 'Develop',
+          key: 'Backlog',
+          label: 'Backlog',
         },
         {
           key: 'Specify',
           label: 'Specify',
         },
         {
-          key: 'Backlog',
-          label: 'Backlog',
+          key: 'Develop',
+          label: 'Develop',
+        },
+        {
+          key: 'QA',
+          label: 'QA',
+        },
+        {
+          key: 'Approved',
+          label: 'Approved',
+        },
+        {
+          key: 'Deployed',
+          label: 'Deployed',
         },
       ]}
     />
@@ -60,32 +70,54 @@ export const Bekk = () => {
 
 // https://ardalis.com/excel-cumulative-flow-diagram/
 type ArdalisDatum = TimeDatum & {
-  Ready: string
-  Dev: string
-  Test: string
-  Deployed: string
+  Ready: number
+  Dev: number
+  Test: number
+  Deployed: number
 }
 
 export const Ardalis = () => {
   return (
     <Cfd
-      data={ardalis as readonly ArdalisDatum[]}
+      data={convert<ArdalisDatum>(ardalis)}
       properties={[
         {
-          key: 'Deployed',
-          label: 'Deployed',
-        },
-        {
-          key: 'Test',
-          label: 'Test',
+          key: 'Ready',
+          label: 'Ready',
         },
         {
           key: 'Dev',
           label: 'Dev',
         },
         {
-          key: 'Ready',
-          label: 'Ready',
+          key: 'Test',
+          label: 'Test',
+        },
+        {
+          key: 'Deployed',
+          label: 'Deployed',
+        },
+      ]}
+    />
+  )
+}
+
+export const Test = () => {
+  return (
+    <Cfd2
+      data={convert<TestDatum>(test)}
+      properties={[
+        {
+          key: 'todo',
+          label: 'Todo',
+        },
+        {
+          key: 'doing',
+          label: 'Doing',
+        },
+        {
+          key: 'done',
+          label: 'Done',
         },
       ]}
     />
