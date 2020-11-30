@@ -61,10 +61,6 @@ const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) =>
       const height = +svg.attr('height') - margin.top - margin.bottom
       // Sometimes called g in bl.ocks.org examples
       const chart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`).attr('class', 'chart')
-      const grp = chart
-        .append('g')
-        .attr('transform', `translate(-${margin.left - strokeWidth},0)`)
-        .attr('class', 'grp')
 
       const xDomain = d3.extent(stackedData[stackedData.length - 1].map((sd) => sd.timestamp)) as [Date, Date]
       const xScale = d3.scaleTime().domain(xDomain).range([0, width])
@@ -81,10 +77,15 @@ const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) =>
         .y0((d) => yScale(d.values[0]))
         .y1((d) => yScale(d.values[1]))
 
-      const series = grp.selectAll('.series').data(stackedData).enter().append('g').attr('class', 'series')
-
-      // TODO: Use CSS (we can even have multiple styles using https://github.com/theBstar/react-switch-theme or similar)
-      series
+      chart
+        .append('g')
+        .attr('transform', `translate(-${margin.left - strokeWidth},0)`)
+        .attr('class', 'grp')
+        .selectAll('.series')
+        .data(stackedData)
+        .enter()
+        .append('g')
+        .attr('class', 'series')
         .append('path')
         .attr('transform', `translate(${margin.left},0)`)
         .style('fill', (d, i) => color[i])
@@ -106,6 +107,7 @@ const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) =>
 
       /////// Hover lines
       const hoverContainer = chart.append('g').style('display', 'none')
+      const circles = stackedData.map(() => hoverContainer.append('circle').attr('r', 4))
 
       // Create a new element for the line - initially invisible
       const focus = hoverContainer.append('g').attr('class', 'focus')
@@ -113,13 +115,11 @@ const Cfd = <Datum extends TimeDatum>(props: PropsWithChildren<Props<Datum>>) =>
       // The height of the line is the full chart. Defined with ({x1=0,y1}, {x2,y2})
       focus.append('line').attr('class', 'hover-line').attr('y1', 0).attr('y2', height)
       focus.append('line').attr('class', 'hover-line').attr('x1', width).attr('x2', width)
+      // focus.append('text').attr('x', 15).attr('dy', '.31em')
 
-      const circles = stackedData.map(() => hoverContainer.append('circle').attr('r', 4))
-
-      focus.append('text').attr('x', 15).attr('dy', '.31em')
-      svg
+      chart
         .append('rect')
-        .attr('transform', `translate(${margin.left},${margin.top})`)
+        // .attr('transform', `translate(${margin.left},${margin.top})`)
         .attr('class', 'overlay')
         .attr('width', width)
         .attr('height', height)
