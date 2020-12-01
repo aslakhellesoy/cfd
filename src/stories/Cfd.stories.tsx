@@ -5,9 +5,9 @@ import React from 'react'
 
 // @ts-ignore
 import test from '../../test/test-cfd.csv'
-import TestDatum from '../../test/TestDatum'
-import Cfd, { TimeDatum } from '../components/Cfd'
-import Cfd2 from '../components/Cfd2'
+import TestLayer from '../../test/TestLayer'
+import Cfd from '../components/Cfd'
+import { TimeDatum } from '../types'
 // @ts-ignore
 import ardalis from './ardalis-cfd.csv'
 // @ts-ignore
@@ -18,49 +18,52 @@ export default {
   component: Cfd,
 } as Meta
 
-function convert<T extends TimeDatum>(data: Record<string, string | number>[]): ReadonlyArray<T> {
+function convert<Layer extends string>(data: Record<string, string | number>[]): ReadonlyArray<TimeDatum<Layer>> {
   return data.map((datum) => {
-    return { ...datum, ...{ timestamp: new Date(datum.timestamp) } } as T
+    return { ...datum, ...{ timestamp: new Date(datum.timestamp) } } as TimeDatum<Layer>
   })
 }
 
 // https://blogg.bekk.no/cumulative-flow-diagrams-with-google-spreadsheets-f3c001a431b0
-type BekkDatum = TimeDatum & {
-  Deployed: string
-  Approved: number
-  QA: number
-  Develop: number
-  Specify: number
-  Backlog: number
+
+enum BekkLayers {
+  Deployed = 'Deployed',
+  Approved = 'Approved',
+  QA = 'QA',
+  Develop = 'Develop',
+  Specify = 'Specify',
+  Backlog = 'Backlog',
 }
+
+// type BekkDatum = FlowTimeDatum<BekkLayers>
 
 export const Bekk = () => {
   return (
-    <Cfd2
-      data={convert<BekkDatum>(bekk)}
+    <Cfd
+      data={convert<BekkLayers>(bekk)}
       properties={[
         {
-          key: 'Backlog',
+          key: BekkLayers.Backlog,
           label: 'Backlog',
         },
         {
-          key: 'Specify',
+          key: BekkLayers.Specify,
           label: 'Specify',
         },
         {
-          key: 'Develop',
+          key: BekkLayers.Develop,
           label: 'Develop',
         },
         {
-          key: 'QA',
+          key: BekkLayers.QA,
           label: 'QA',
         },
         {
-          key: 'Approved',
+          key: BekkLayers.Approved,
           label: 'Approved',
         },
         {
-          key: 'Deployed',
+          key: BekkLayers.Deployed,
           label: 'Deployed',
         },
       ]}
@@ -69,32 +72,32 @@ export const Bekk = () => {
 }
 
 // https://ardalis.com/excel-cumulative-flow-diagram/
-type ArdalisDatum = TimeDatum & {
-  Ready: number
-  Dev: number
-  Test: number
-  Deployed: number
+enum ArdalisLayer {
+  Ready = 'Ready',
+  Dev = 'Dev',
+  Test = 'Test',
+  Deployed = 'Deployed',
 }
 
 export const Ardalis = () => {
   return (
     <Cfd
-      data={convert<ArdalisDatum>(ardalis)}
+      data={convert<ArdalisLayer>(ardalis)}
       properties={[
         {
-          key: 'Ready',
+          key: ArdalisLayer.Ready,
           label: 'Ready',
         },
         {
-          key: 'Dev',
+          key: ArdalisLayer.Dev,
           label: 'Dev',
         },
         {
-          key: 'Test',
+          key: ArdalisLayer.Test,
           label: 'Test',
         },
         {
-          key: 'Deployed',
+          key: ArdalisLayer.Deployed,
           label: 'Deployed',
         },
       ]}
@@ -104,19 +107,19 @@ export const Ardalis = () => {
 
 export const Test = () => {
   return (
-    <Cfd2
-      data={convert<TestDatum>(test)}
+    <Cfd
+      data={convert<TestLayer>(test)}
       properties={[
         {
-          key: 'todo',
+          key: TestLayer.todo,
           label: 'Todo',
         },
         {
-          key: 'doing',
+          key: TestLayer.doing,
           label: 'Doing',
         },
         {
-          key: 'done',
+          key: TestLayer.done,
           label: 'Done',
         },
       ]}

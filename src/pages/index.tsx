@@ -1,7 +1,5 @@
 import React from 'react'
 
-import BusinessCard from '../components/BusinessCard'
-
-const IndexPage = () => <BusinessCard givenName={'Aslak'} familyName={'Hellesøy'} />
+const IndexPage = () => <h1>Hello</h1>
 
 export default IndexPage
