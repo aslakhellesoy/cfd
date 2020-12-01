@@ -10,8 +10,6 @@ interface Props<Layer extends string> {
 }
 
 const bisectDate = d3.bisector((d: BaseTimeDatum) => d.timestamp).left
-
-// const color = ['#585a4d', '#707266', '#888980', '#9fa199', '#b7b8b2', '#cfd0cc']
 const margin = { top: 20, right: 30, bottom: 30, left: 40 }
 
 const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
@@ -85,18 +83,20 @@ const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
       const datumCircles = series.map(() => hoverContainer.append('circle').attr('r', 4))
       const ltCircles = series.map(() => hoverContainer.append('circle').attr('r', 4))
 
-      // Create a new element for the line - initially invisible
       const focus = hoverContainer.append('g').attr('class', 'focus')
+      focus
+        .append('line')
+        .attr('stroke', '#111401')
+        .attr('stroke-width', '2px')
+        .attr('stroke-dasharray', '3, 3')
+        .attr('y1', 0)
+        .attr('y2', height)
 
-      // The height of the line is the full chart. Defined with ({x1=0,y1}, {x2,y2})
-      focus.append('line').attr('class', 'hover-line').attr('y1', 0).attr('y2', height)
-      // focus.append('line').attr('class', 'hover-line').attr('x1', width).attr('x2', width)
-      // focus.append('text').attr('x', 15).attr('dy', '.31em')
-
+      // Draw the area chart
       svg
         .append('rect')
-        // .attr('transform', `translate(${margin.left},${margin.top})`)
-        .attr('class', 'overlay')
+        .attr('fill', 'none')
+        .attr('pointer-events', 'all')
         .attr('width', width)
         .attr('height', height)
         .on('mouseover', () => hoverContainer.style('display', null))
