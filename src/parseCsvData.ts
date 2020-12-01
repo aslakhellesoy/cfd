@@ -2,7 +2,7 @@ import Papa from 'papaparse'
 
 import { TimeDatum } from './types'
 
-export default function parseCsvData<Layer extends string>(
+export default function parseCsvData<Layer extends string | number>(
   input: string | File | NodeJS.ReadableStream
 ): Promise<readonly TimeDatum<Layer>[]> {
   return new Promise<readonly TimeDatum<Layer>[]>((resolve, reject) => {

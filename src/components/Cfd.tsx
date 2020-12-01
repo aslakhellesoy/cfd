@@ -5,10 +5,7 @@ import { BaseTimeDatum, TimeDatum } from '../types'
 
 interface Props<Layer extends string> {
   data: readonly TimeDatum<Layer>[]
-  properties: readonly {
-    key: Layer
-    label: string
-  }[]
+  keys: readonly string[]
 }
 
 const bisectDate = d3.bisector((d: BaseTimeDatum) => d.timestamp).left
@@ -17,7 +14,7 @@ const bisectDate = d3.bisector((d: BaseTimeDatum) => d.timestamp).left
 const margin = { top: 20, right: 30, bottom: 30, left: 40 }
 
 const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
-  const { data, properties } = props
+  const { data, keys } = props
 
   const d3Container = useRef(null)
 
@@ -30,15 +27,12 @@ const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
 
       const color = d3
         .scaleOrdinal()
-        .domain(properties.map((p) => p.label))
+        .domain(keys)
         // https://github.com/d3/d3-scale-chromatic
         .range(d3.schemeGreens[9])
 
-      const keys = properties.map((p) => p.key.toString()).reverse()
-      const stackGen = d3.stack<TimeDatum<Layer>>().keys(keys)
+      const stackGen = d3.stack<TimeDatum<Layer>>().keys([...keys].reverse())
       const series = stackGen(data)
-
-      console.log('series: %o', series)
 
       const xScale = d3
         .scaleUtc()
@@ -56,10 +50,7 @@ const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
         // @ts-ignore
         .x((d) => xScale(d.data.timestamp))
         .y0((d) => yScale(d[0]))
-        .y1((d) => {
-          console.log({ d })
-          return yScale(d[1])
-        })
+        .y1((d) => yScale(d[1]))
 
       const xAxis = (g: d3.Selection<SVGGElement, unknown, null, undefined>) =>
         g.attr('transform', `translate(0,${height - margin.bottom})`).call(
@@ -134,7 +125,7 @@ const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
           // focus.select('text').text(() => d.values[1])
         })
     }
-  }, [data, properties])
+  }, [data, keys])
 
   return <svg width={800} height={400} ref={d3Container} />
 }
