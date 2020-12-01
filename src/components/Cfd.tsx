@@ -78,21 +78,33 @@ const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
       svg.append('g').call(xAxis)
       svg.append('g').call(yAxis)
 
-      /////// Hover lines
+      /////// Append hover elements
       const hoverContainer = svg.append('g').style('display', 'none')
       const datumCircles = series.map(() => hoverContainer.append('circle').attr('r', 4))
       const ltCircles = series.map(() => hoverContainer.append('circle').attr('r', 4))
+      const ltLines = series.map(() =>
+        hoverContainer
+          .append('line')
+          .attr('stroke', '#111401')
+          .attr('stroke-width', '2px')
+          .attr('stroke-dasharray', '3, 3')
+          .attr('x1', 0)
+          .attr('x2', 0)
+          .attr('y1', 0)
+          .attr('y2', 0)
+      )
 
-      const focus = hoverContainer.append('g').attr('class', 'focus')
-      focus
+      const verticalLine = hoverContainer
         .append('line')
         .attr('stroke', '#111401')
         .attr('stroke-width', '2px')
         .attr('stroke-dasharray', '3, 3')
+        .attr('x1', 0)
+        .attr('x2', 0)
         .attr('y1', 0)
         .attr('y2', height)
 
-      // Draw the area chart
+      // Add an transparent element that's only about capturing mouse events
       svg
         .append('rect')
         .attr('fill', 'none')
@@ -135,6 +147,7 @@ const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
 
               const lt = ltDatum[seriesDi.key]
               const ltCircle = ltCircles[di]
+              const ltLine = ltLines[di]
               if (lt !== undefined) {
                 // Move (and show) the lt circle
                 ltCircle.style('display', null)
@@ -142,12 +155,16 @@ const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
                 const ltX = xScale(ltTimestamp)
 
                 ltCircle.attr('transform', `translate(${ltX},${datumY})`)
+
+                // Move (and show) the lt line
+                ltLine.style('display', null)
+                ltLine.attr('x1', datumX).attr('x2', ltX).attr('y1', datumY).attr('y2', datumY)
               } else {
-                // Hide the lt circle
                 ltCircle.style('display', 'none')
+                ltLine.style('display', 'none')
               }
             }
-            focus.attr('transform', `translate(${datumX},0)`)
+            verticalLine.attr('transform', `translate(${datumX},0)`)
 
             // Set the text
             // focus.select('text').text(() => d.values[1])
