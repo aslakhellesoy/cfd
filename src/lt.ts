@@ -20,11 +20,5 @@ export default function lt<Layer extends string>(
     (point) => point.data.timestamp.getTime() > pointFrom.data.timestamp.getTime() && point[0] >= threshold
   )
   if (!pointTo) return undefined
-  const pointToLt = pointTo.data.timestamp.getTime() - pointFrom.data.timestamp.getTime()
-
-  const previousPoint = layer[layer.indexOf(pointTo) - 1]
-  const previousPointLt = previousPoint.data.timestamp.getTime() - pointFrom.data.timestamp.getTime()
-
-  // TODO: Weighted
-  return (pointToLt + previousPointLt) / 2
+  return pointTo.data.timestamp.getTime() - pointFrom.data.timestamp.getTime()
 }
