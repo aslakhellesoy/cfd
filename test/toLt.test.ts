@@ -15,31 +15,30 @@ describe('leadTime', () => {
 
   it('calculates discrete average lead times', () => {
     const ltData = toLt<TestLayer>(data, Object.keys(TestLayer).reverse() as TestLayer[], false, days)
-    console.log(JSON.stringify(ltData, null, 2))
     assert.deepStrictEqual(ltData, [
       {
         timestamp: data[0].timestamp,
-        todo: 1,
-        done: 1,
-        doing: 1,
+        todo: undefined,
+        done: undefined,
+        doing: undefined,
       },
       {
         timestamp: data[1].timestamp,
         todo: 3,
-        doing: 1,
-        done: 1,
+        doing: undefined,
+        done: undefined,
       },
       {
         timestamp: data[2].timestamp,
         todo: 3,
         doing: 2,
-        done: 1,
+        done: undefined,
       },
       {
         timestamp: data[3].timestamp,
         todo: 3,
         doing: 1,
-        done: 1,
+        done: undefined,
       },
       {
         timestamp: data[4].timestamp,
@@ -63,31 +62,31 @@ describe('leadTime', () => {
   })
 
   it('calculates linear average lead times', () => {
-    const ltData = toLt<TestLayer>(data, Object.keys(TestLayer).reverse() as TestLayer[], true)
+    const ltData = toLt<TestLayer>(data, Object.keys(TestLayer).reverse() as TestLayer[], true, days)
     assert.deepStrictEqual(ltData, [
       {
         timestamp: data[0].timestamp,
-        todo: 1,
-        done: 1,
-        doing: 1,
+        todo: undefined,
+        done: undefined,
+        doing: undefined,
       },
       {
         timestamp: data[1].timestamp,
-        todo: 3,
-        doing: 1,
-        done: 1,
+        todo: 7 / 3,
+        doing: undefined,
+        done: undefined,
       },
       {
         timestamp: data[2].timestamp,
         todo: 3,
         doing: 2,
-        done: 1,
+        done: undefined,
       },
       {
         timestamp: data[3].timestamp,
         todo: 3,
         doing: 1,
-        done: 1,
+        done: undefined,
       },
       {
         timestamp: data[4].timestamp,

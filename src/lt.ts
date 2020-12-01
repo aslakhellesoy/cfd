@@ -20,6 +20,10 @@ export default function lt<Layer extends string>(
   const start = layer.find((point) => point.data.timestamp === timestamp)!
   // The threshold is the UPPER value
   const threshold = start[1]
+  if (threshold === 0) {
+    return undefined
+  }
+
   // Find the first following point whose LOWER value is greater or equal to the threshold
   const end = layer.find(
     (point) => point.data.timestamp.getTime() > start.data.timestamp.getTime() && point[0] >= threshold
