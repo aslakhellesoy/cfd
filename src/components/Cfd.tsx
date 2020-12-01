@@ -1,11 +1,12 @@
 import * as d3 from 'd3'
 import React, { PropsWithChildren, useEffect, useRef } from 'react'
 
+import toLt from '../toLt'
 import { BaseTimeDatum, TimeDatum } from '../types'
 
 interface Props<Layer extends string> {
   data: readonly TimeDatum<Layer>[]
-  keys: readonly string[]
+  keys: readonly Layer[]
 }
 
 const bisectDate = d3.bisector((d: BaseTimeDatum) => d.timestamp).left
@@ -15,6 +16,9 @@ const margin = { top: 20, right: 30, bottom: 30, left: 40 }
 
 const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
   const { data, keys } = props
+
+  const ltData = toLt(data, keys)
+  console.log(ltData)
 
   const d3Container = useRef(null)
 
