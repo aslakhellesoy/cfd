@@ -16,7 +16,7 @@ const margin = { top: 20, right: 30, bottom: 30, left: 40 }
 
 const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
   const { data, keys } = props
-  const ltData = toLt(data, keys)
+  const ltData = toLt(data, keys, true)
 
   const d3Container = useRef(null)
 
