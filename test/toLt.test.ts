@@ -13,7 +13,7 @@ describe('leadTime', () => {
     data = await parseCsvData<TestLayer>(fs.createReadStream(__dirname + '/test-cfd.csv', 'utf-8'))
   })
 
-  it('calculates lead times for each datum', () => {
+  it('calculates discrete average lead times', () => {
     const ltData = toLt<TestLayer>(data, Object.keys(TestLayer) as TestLayer[])
     assert.deepStrictEqual(ltData, [
       {
@@ -31,8 +31,8 @@ describe('leadTime', () => {
       {
         timestamp: data[2].timestamp,
         todo: undefined,
-        doing: undefined,
-        done: 172800000,
+        doing: 86400000,
+        done: 86400000,
       },
       {
         timestamp: data[3].timestamp,
@@ -44,10 +44,16 @@ describe('leadTime', () => {
         timestamp: data[4].timestamp,
         todo: undefined,
         doing: undefined,
-        done: undefined,
+        done: 86400000,
       },
       {
         timestamp: data[5].timestamp,
+        todo: undefined,
+        doing: undefined,
+        done: undefined,
+      },
+      {
+        timestamp: data[6].timestamp,
         todo: undefined,
         doing: undefined,
         done: undefined,
