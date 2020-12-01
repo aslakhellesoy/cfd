@@ -36,7 +36,7 @@ enum BekkLayers {
 }
 
 export const Bekk = () => {
-  return <Cfd data={convert<BekkLayers>(bekk)} keys={Object.keys(BekkLayers) as BekkLayers[]} />
+  return <Cfd data={convert<BekkLayers>(bekk)} keys={Object.keys(BekkLayers).reverse() as BekkLayers[]} />
 }
 
 // https://ardalis.com/excel-cumulative-flow-diagram/
@@ -48,9 +48,9 @@ enum ArdalisLayer {
 }
 
 export const Ardalis = () => {
-  return <Cfd data={convert<ArdalisLayer>(ardalis)} keys={Object.keys(ArdalisLayer) as ArdalisLayer[]} />
+  return <Cfd data={convert<ArdalisLayer>(ardalis)} keys={Object.keys(ArdalisLayer).reverse() as ArdalisLayer[]} />
 }
 
 export const Test = () => {
-  return <Cfd data={convert<TestLayer>(test)} keys={Object.keys(TestLayer) as TestLayer[]} />
+  return <Cfd data={convert<TestLayer>(test)} keys={Object.keys(TestLayer).reverse() as TestLayer[]} />
 }
