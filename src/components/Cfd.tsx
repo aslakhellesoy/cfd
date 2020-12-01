@@ -106,6 +106,7 @@ const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
           const i = bisectDate(data, x0, 1)
           const datumLeft = data[i - 1]
           const datumRight = data[i]
+          if (datumLeft === undefined || datumRight === undefined) return
           const n =
             x0.getTime() - datumLeft.timestamp.getTime() > datumRight.timestamp.getTime() - x0.getTime() ? i : i - 1
           const dx = data[n]
