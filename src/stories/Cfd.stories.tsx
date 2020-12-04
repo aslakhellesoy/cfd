@@ -12,6 +12,8 @@ import { TimeDatum } from '../types'
 import ardalis from './ardalis-cfd.csv'
 // @ts-ignore
 import bekk from './bekk-cfd.csv'
+// @ts-ignore
+import nave from './nave-cfd.csv'
 
 export default {
   title: 'Cfd',
@@ -49,6 +51,21 @@ enum ArdalisLayer {
 
 export const Ardalis = () => {
   return <Cfd data={convert<ArdalisLayer>(ardalis)} keys={Object.keys(ArdalisLayer).reverse() as ArdalisLayer[]} />
+}
+
+enum NaveLayers {
+  Todo = 'Todo',
+  Development = 'Development',
+  Codereview = 'Codereview',
+  CodereviewDone = 'CodereviewDone',
+  Testing = 'Testing',
+  TestingDone = 'TestingDone',
+  Deployment = 'Deployment',
+  Done = 'Done',
+}
+
+export const Nave = () => {
+  return <Cfd data={convert<NaveLayers>(nave)} keys={Object.keys(NaveLayers).reverse() as NaveLayers[]} />
 }
 
 export const Test = () => {

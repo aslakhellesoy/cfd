@@ -15,7 +15,6 @@ const margin = { top: 20, right: 30, bottom: 30, left: 40 }
 const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
   const { data, keys } = props
   const ltData = toLt(data, keys, true)
-
   const d3Container = useRef(null)
 
   useEffect(() => {
@@ -131,9 +130,9 @@ const Cfd = <Layer extends string>(props: PropsWithChildren<Props<Layer>>) => {
 
             // Move (transform) lines and circles
             const ltDatum = ltData[nearestIndex]
-
             const datumTimestamp = data[nearestIndex].timestamp
             const datumX = xScale(datumTimestamp)
+
             for (let di = 0; di < series.length; di++) {
               const seriesDi = series[di]
               const stackDatum = seriesDi[nearestIndex]

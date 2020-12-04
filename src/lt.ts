@@ -26,18 +26,17 @@ export default function lt<Layer extends string>(
 
   // Find the first following point whose LOWER value is greater or equal to the threshold
   const end = layer.find(
-    (point) => point.data.timestamp.getTime() > start.data.timestamp.getTime() && point[0] >= threshold
+    (point) => point.data.timestamp.getTime() >= start.data.timestamp.getTime() && point[0] >= threshold
   )
   if (end === undefined) {
     return undefined
   }
   const discreteLt = end.data.timestamp.getTime() - start.data.timestamp.getTime()
-
   if (linear) {
     const beforeEnd = layer[layer.indexOf(end) - 1]
     const beforeY = end[0] - beforeEnd[0]
     const startY = end[0] - start[1]
-    const fraction = startY / beforeY
+    const fraction = startY === 0 ? 0 : startY / beforeY
     const dx = fraction * (end.data.timestamp.getTime() - beforeEnd.data.timestamp.getTime())
     const linearLt = discreteLt - dx
     return adjust(linearLt)
